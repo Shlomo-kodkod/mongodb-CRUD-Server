@@ -9,6 +9,7 @@ class Soldier:
         self.first_name = first_name
         self.last_name = last_name
         self.rank = rank
+        id_number += 1
 
 
     def __repr__(self):
