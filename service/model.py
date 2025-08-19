@@ -4,11 +4,11 @@ class Soldier:
 
     id_number = 0
 
-    def __init__(self, soldier_id, first_name, last_name):
-        self.soldier_id = soldier_id
+    def __init__(self, soldier_id, first_name, last_name, rank):
+        self.soldier_id = Soldier.id_number + 1
         self.first_name = first_name
         self.last_name = last_name
-        self.rank = Soldier.id_number + 1
+        self.rank = rank
 
 
     def __repr__(self):
