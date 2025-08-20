@@ -2,7 +2,7 @@ import os
 
 
 
-host=os.getenv("MONGO_HOST", "mongodb://mongodb-community-server")
+host=os.getenv("MONGO_HOST", "mongodb-community-server")
 port=int(os.getenv("MONGO_PORT", 27017))
 username=os.getenv("MONGO_INITDB_ROOT_USERNAME", "root")
 password=os.getenv("MONGO_INITDB_ROOT_PASSWORD", "pass")

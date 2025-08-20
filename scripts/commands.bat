@@ -1,11 +1,13 @@
+docker build -t kodkod1docker/mongo-crud-server:v5 .
+docker push kodkod1docker/mongo-crud-server:v5
+
+
+cd infrastructure\k8s 
+
 oc apply -f mongodb-secret.yaml
 oc apply -f mongo-pvc.yaml
 oc apply -f mongodb-deployment.yaml
 oc apply -f mongo-service.yaml
-
-
-docker build -t kodkod1docker/mongo-crud-server:v1 .
-docker push kodkod1docker/mongo-crud-server:v1
 
 
 oc apply -f fastapi-deployment.yaml

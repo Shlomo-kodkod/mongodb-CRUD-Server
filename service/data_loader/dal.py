@@ -13,7 +13,8 @@ class DAL:
         Connect to the mongodb database.
         """
         try:
-            self.__client = MongoClient(host=config.host, port=config.port)
+            uri = f"mongodb://{config.username}:{config.password}@{config.host}:{config.port}/?authSource=admin"
+            self.__client = MongoClient(uri)
             self.__db = self.__client[config.db]
             logger.info(f"Connected to mongodb at {config.host}:{config.port}")
         except Exception as e:
