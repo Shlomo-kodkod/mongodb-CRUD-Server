@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-community-server
+spec:
+  selector:
+    matchLabels:
+      app: mongodb-community-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongodb-community-server
+    spec:
+      containers:
+        - name: mongodb-community-server
+          image: docker.io/mongo:6.0
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+          env: 
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_ROOT_PASSWORD
+            - name: MONGO_INITDB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_DATABASE
+          volumeMounts:
+            - name: mongopvc  
+              mountPath: /data/db 
+      volumes:
+        - name: mongopvc
+          persistentVolumeClaim:
+            claimName: mongopvc 
+      imagePullSecrets: []
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  paused: false
+
+

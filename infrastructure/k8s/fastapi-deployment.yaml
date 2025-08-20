@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-server
+spec:
+  selector:
+    matchLabels:
+      app: fastapi-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fastapi-server
+    spec:
+      containers:
+        - name: fastapi-server
+          image: kodkod1docker/mongo-crud-server:v1
+          ports:
+            - containerPort: 8083
+              protocol: TCP
+          env: 
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_ROOT_PASSWORD
+            - name: MONGO_INITDB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_DATABASE
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
