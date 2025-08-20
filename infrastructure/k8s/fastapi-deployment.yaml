@@ -14,11 +14,13 @@ spec:
     spec:
       containers:
         - name: fastapi-server
-          image: kodkod1docker/mongo-crud-server:v4
+          image: kodkod1docker/mongo-crud-server:v5
           ports:
             - containerPort: 8083
               protocol: TCP
           env: 
+            - name: MONGO_HOST
+              value: "mongodb-community-server"
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
