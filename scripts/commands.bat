@@ -4,8 +4,8 @@ oc apply -f mongodb-deployment.yaml
 oc apply -f mongo-service.yaml
 
 
-docker build -t kodkod1docker/mongo-crud-server:v2 .
-docker push kodkod1docker/mongo-crud-server:v2
+docker build -t kodkod1docker/mongo-crud-server:v4 .
+docker push kodkod1docker/mongo-crud-server:v4
 
 
 oc apply -f fastapi-deployment.yaml
