@@ -8,84 +8,94 @@ logger = logging.getLogger(__name__)
 
 class DAL:
 
-    @staticmethod
     def connect(self):
         """
-        Create a connection to the MongoDB database using the configuration settings.
+        Connect to the mongodb database.
         """
         try:
-            client = MongoClient(host=config.host, port=config.port, username=config.username, password=config.password)
-            db = client[config.db]
-            logger.info(f"Connected to MongoDB at {config.host}:{config.port}")
-            return db
+            self.__client = MongoClient(host=config.host, port=config.port)
+            self.__db = self.__client[config.db]
+            logger.info(f"Connected to mongodb at {config.host}:{config.port}")
         except Exception as e:
-            logger.error(f"Failed to connect to MongoDB: {e}")
+            logger.error(f"Failed to connect to mongodb: {e}")
             raise e
     
-    @staticmethod
-    def read_collection(collection_name=config.collection):
+    def disconnect(self):
+        """
+        Disconnect from the mongodb database.
+        """ 
+        if self.__client is not None:
+            self.__client.close()
+            logger.info("Database connection closed.")
+
+    def read_collection(self, collection_name=config.collection) -> list:
         """""
-        Read a collection from the MongoDB database.
+        Read a collection from the mongodb database.
         """
         try:
-            db = DAL.connect()
-            collection = db[collection_name]
+            self.connect()
+            collection = self.__db[collection_name]
             data = list(collection.find({}, {"_id": 0}))  
-            logger.info(f"Data loaded successfully from {collection.name} collection.")
+            logger.info(f"Data loaded successfully.")
             return data
         except Exception as e:
-            logger.error(f"Failed to retrieve collection {collection_name}: {e}")
+            logger.error(f"Failed to retrieve collection: {e}")
             raise e
+        finally:
+            self.disconnect()
         
-    @staticmethod
-    def create_soldier(soldier: Soldier):
+    def create_soldier(self, soldier: Soldier):
         """
-        Create a soldier document and insert into the MongoDB collection.
+        Create a soldier document and insert into the mongodb collection.
         """
         try:
-            db = DAL.connect()
-            collection = db[config.collection]
+            self.connect()
+            collection = self.__db[config.collection]
             result = collection.insert_one(soldier.__dict__)
-            logger.info(f"Soldier {soldier.soldier_id} inserted successfully.")
-            return result.inserted_id
+            logger.info(f"Soldier inserted successfully.")
+            return result.acknowledged
         except Exception as e:
             logger.error(f"Failed to insert soldier: {e}")
             raise e
+        finally:
+            self.disconnect()
         
-    @staticmethod
-    def update_soldier(soldier_id, updated_data: dict):
+    def update_soldier(self, soldier_id, updated_data: dict):
         """
-        Update a soldier document in the MongoDB collection.
+        Update a soldier document in the mongodb collection.
         """
         try:
-            db = DAL.connect()
-            collection = db[config.collection]
+            self.connect()
+            collection = self.__db[config.collection]
             result = collection.update_one({"soldier_id": soldier_id}, {"$set": updated_data})
             if result.modified_count > 0:
-                logger.info(f"Soldier {soldier_id} updated successfully.")
+                logger.info(f"Soldier updated successfully.")
             else:
-                logger.warning(f"No changes made for soldier {soldier_id}.")
-            return result.modified_count
+                logger.warning(f"No changes made.")
+            return result.acknowledged
         except Exception as e:
-            logger.error(f"Failed to update soldier {soldier_id}: {e}")
+            logger.error(f"Failed to update soldier : {e}")
             raise e 
+        finally:
+            self.disconnect()
 
-    @staticmethod
-    def delete_soldier(soldier_id):
+    def delete_soldier(self, soldier_id):
         """
-        Delete a soldier document from the MongoDB collection.
+        Delete a soldier document from the mongodb collection.
         """
         try:
-            db = DAL.connect()
-            collection = db[config.collection]
+            self.connect()
+            collection = self.__db[config.collection]
             result = collection.delete_one({"soldier_id": soldier_id})
             if result.deleted_count > 0:
-                logger.info(f"Soldier {soldier_id} deleted successfully.")
+                logger.info(f"Soldier deleted successfully.")
             else:
-                logger.warning(f"No soldier found with ID {soldier_id}.")
-            return result.deleted_count
+                logger.warning(f"Soldier not found.")
+            return result.acknowledged
         except Exception as e:
-            logger.error(f"Failed to delete soldier {soldier_id}: {e}")
+            logger.error(f"Failed to delete soldier : {e}")
             raise e
+        finally:
+            self.disconnect()
 
     
