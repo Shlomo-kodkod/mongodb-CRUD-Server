@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: fastapi-server
-          image: kodkod1docker/mongo-crud-server:v5
+          image: kodkod1docker/mongo-crud-server:v6
           ports:
             - containerPort: 8083
               protocol: TCP
